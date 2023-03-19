@@ -4,7 +4,7 @@
   </div>
   <div>
     <button @click="redirect('/new')">New Subscription</button>
-    <button @click="redirect('/all')">My Subscription</button>
+    <button @click="redirect('/all')">Active Subscriptions</button>
   </div>
 </template>
   
@@ -13,7 +13,7 @@
   
   const router = useRouter();
 
-  const redirect = (path: string) => { router.push({ path }) };
+  const redirect = (path: string) => router.push({ path });
 
 </script>
   
