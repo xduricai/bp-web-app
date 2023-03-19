@@ -56,7 +56,7 @@ const onSubmit = async () => {
     if (!recipient.value) {
         errorMsg.value = "Please add a valid recipient address";
     }
-    if (recipient.value && recipient.value.length !== 32) {
+    if (recipient.value && (recipient.value.length < 32 || recipient.value.length > 45)) {
         errorMsg.value = "Invalid address";
     }
     if (errorMsg.value) {
