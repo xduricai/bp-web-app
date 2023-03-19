@@ -8,7 +8,7 @@
         <input class="form-field" id="recipient" placeholder="Enter recipient address..." v-model="recipient">
 
         <label for="length">Length</label>
-        <input class="form-field" id="length" placeholder="Enter subscription length in minutes..." v-model="length">
+        <input class="form-field" id="length" type="number" min="1" placeholder="Enter subscription length in minutes..." v-model="length">
         
         <label for="url">URL</label>
         <input class="form-field" id="url" placeholder="Enter API URL..." v-model="url">
@@ -47,11 +47,17 @@ const onSubmit = async () => {
     if (!url.value) {
         errorMsg.value = "Please add a valid API URL";
     }
-    if (!length.value || length.value <= 0) {
+    if (url.value && url.value.length > 100) {
+        errorMsg.value = "API URL must not exceed 100 characters";
+    }
+    if (!length.value || typeof length.value !== "number" || length.value <= 0) {
         errorMsg.value = "Subscription lenght must be a non-negative number";
     }
     if (!recipient.value) {
         errorMsg.value = "Please add a valid recipient address";
+    }
+    if (recipient.value && recipient.value.length !== 32) {
+        errorMsg.value = "Invalid address";
     }
     if (errorMsg.value) {
         hasError.value = true;
@@ -61,12 +67,17 @@ const onSubmit = async () => {
     let inputOptions = {};
 
     try {
+        if(options.value && options.value.length > 800) {
+            errorMsg.value = "Options length must not exceed 800 characters";
+            hasError.value = true;
+            return;
+        }
+
         inputOptions = options.value ? JSON.parse(options.value) : {};
         inputOptions = { ...inputOptions, url: url.value};
     } catch (err) { 
         errorMsg.value = "JSON format invalid";
         hasError.value = true;
-        console.log(err);
         return;
     }
 
@@ -75,7 +86,7 @@ const onSubmit = async () => {
         recipient: recipient.value as string,
         options: JSON.stringify(inputOptions)
     }
-    
+
     console.log(input);
 }
 
