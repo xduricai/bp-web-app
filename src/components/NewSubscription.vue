@@ -3,7 +3,7 @@
         <h1>New Subscription</h1>
     </div>
 
-    <div class="form-wrapper">
+    <div v-if="connected" class="form-wrapper">
         <label for="recipient">Recipient</label>
         <input class="form-field" id="recipient" placeholder="Enter recipient address..." v-model="recipient">
 
@@ -23,13 +23,24 @@
             <button @click="onSubmit()">Submit</button>
         </div>
     </div>
+    <div v-else class="wallet-error">
+        <h1>ERROR: Wallet not connected!</h1>
+    </div>
 
 </template>
     
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useWorkspace } from '@/composables';
+
+const { wallet } = useWorkspace();
+const { connected } = useWorkspace();
+
+//TODO
+console.log(wallet);
+console.log(connected.value);
 
 const router = useRouter();
 const recipient = ref<string>();
@@ -148,6 +159,12 @@ interface SubscriptionInput {
             background: rgb(46, 46, 180);
         }
     }
+}
+
+.wallet-error {
+    display: flex;
+    justify-content: center;
+    color: red;
 }
 
 </style>
