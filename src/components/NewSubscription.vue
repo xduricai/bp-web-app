@@ -34,13 +34,15 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useWorkspace } from '@/composables';
+//import * as anchor from '@project-serum/anchor';
 
-const { wallet } = useWorkspace();
-const { connected } = useWorkspace();
+const { connected, wallet, program, state } = useWorkspace();
 
 //TODO
-console.log(wallet);
 console.log(connected.value);
+console.log(wallet.value);
+console.log(state);
+console.log(program);
 
 const router = useRouter();
 const recipient = ref<string>();
@@ -91,6 +93,8 @@ const onSubmit = async () => {
         hasError.value = true;
         return;
     }
+
+    //const subscription = anchor.web3.Keypair.generate();
 
     const input: SubscriptionInput = {
         length: length.value as number,

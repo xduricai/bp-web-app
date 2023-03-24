@@ -4,6 +4,7 @@
     </div>
     <div class="actions-container">
         <wallet-multi-button></wallet-multi-button>
+        <button @click="initContract()">Initialize Contract</button>
         <button @click="redirect('/new')">New Subscription</button>
         <button @click="redirect('/all')">Active Subscriptions</button>
     </div>
@@ -12,6 +13,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { WalletMultiButton } from 'solana-wallets-vue'
+import { initContract } from '@/composables';
 
 const router = useRouter();
 
