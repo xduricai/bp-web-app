@@ -34,7 +34,8 @@ export const initWorkspace = () => {
 export const initContract = async () => {
     await workspace.program.value.methods.initialize().accounts({
         state: workspace.state,
-        payer: workspace.wallet.value?.publicKey
+        payer: workspace.wallet.value?.publicKey,
+        recentSlothashes: new PublicKey('SysvarS1otHashes111111111111111111111111111')
     })
     .signers([workspace.stateKeypair])
     .rpc();
