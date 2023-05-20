@@ -1,4 +1,4 @@
-import { computed, ComputedRef, Ref } from 'vue';
+import { computed, ComputedRef, ref, Ref } from 'vue';
 import { AnchorWallet, useAnchorWallet, useWallet } from 'solana-wallets-vue';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import { Provider, Program, Idl } from '@project-serum/anchor';
@@ -8,7 +8,7 @@ import idl from '../../../../oracle-smart-contract/target/idl/oracle_smart_contr
 let workspace: Workspace;
 const programId = new PublicKey(idl.metadata.address)
 
-export const useWorkspace = () => workspace;
+export const useWorkspace = (): Workspace => workspace;
 
 export const initWorkspace = () => {
     const { connected } = useWallet();
@@ -19,6 +19,8 @@ export const initWorkspace = () => {
     const program = computed(() => new Program(idl as Idl, programId, provider.value));
     const stateKeypair = anchor.web3.Keypair.generate();
     const state = stateKeypair.publicKey;
+    const loading = ref(false);
+    const initialized = ref(false);
 
     workspace = {
         connected,
@@ -27,11 +29,15 @@ export const initWorkspace = () => {
         provider,
         program,
         stateKeypair,
-        state
+        state,
+        loading,
+        initialized
     }
 }
 
 export const initContract = async () => {
+    workspace.loading.value = true;
+
     await workspace.program.value.methods.initialize().accounts({
         state: workspace.state,
         payer: workspace.wallet.value?.publicKey,
@@ -40,6 +46,8 @@ export const initContract = async () => {
     .signers([workspace.stateKeypair])
     .rpc();
 
+    workspace.initialized.value = true;
+    workspace.loading.value = false;
     console.log('done');
 
     const stateAccount = await workspace.program.value.account.state.fetch(workspace.state);
@@ -54,4 +62,6 @@ export interface Workspace {
     program: ComputedRef<Program<Idl>>;
     stateKeypair: Keypair;
     state: PublicKey;
+    loading: Ref<boolean>;
+    initialized: Ref<boolean>;
 }
