@@ -48,10 +48,64 @@ export const initContract = async () => {
 
     workspace.initialized.value = true;
     workspace.loading.value = false;
-    console.log('done');
+    console.log('app initialized');
+    /*
+    for(let i = 0; i < 1; i++) {
+        const keypair = anchor.web3.Keypair.generate();
 
+        await workspace.program.value.methods.addOracle().accounts({
+            oracle: keypair.publicKey,
+            state: workspace.state,
+            payer: workspace.wallet.value?.publicKey,
+            recentSlothashes: new PublicKey('SysvarS1otHashes111111111111111111111111111')
+        })
+        .signers([keypair])
+        .rpc();
+    }
+
+    console.log('oracles added');
+
+    for(let i = 0; i < 1; i++) {
+        const keypair = anchor.web3.Keypair.generate();
+        const input: SubscriptionInput = {
+            duration: new anchor.BN(1000),
+            address: keypair.publicKey.toString(),
+            options: JSON.stringify({})
+        }
+
+        await workspace.program.value.methods.addSubscription(input).accounts({
+            subscription: keypair.publicKey,
+            state: workspace.state,
+            client: workspace.wallet.value?.publicKey,
+        })
+        .signers([keypair])
+        .rpc();
+    }
+
+    console.log('subscriptions added');
+    */
+    /*
+    const data = {
+        abc: 1,
+        def: 2,
+        ghi: 3
+    }
+   
+    await workspace.program.value.methods.reportData(JSON.stringify(data)).accounts({
+        subscription: 'DtCPjn2oLBXf4tyUpkN6RmrqABJcjz9Dece3318ibzWo'
+    })
+    .rpc();
+    */
     const stateAccount = await workspace.program.value.account.state.fetch(workspace.state);
     console.log(stateAccount);
+    const subscriptions = await workspace.program.value.account.subscription.all();
+    console.log(subscriptions);
+
+    subscriptions.forEach(sub => {
+        console.log(sub.account.client.toString());
+    })
+
+    console.log(workspace.wallet.value?.publicKey.toString());
 }
 
 export interface Workspace {
@@ -64,4 +118,10 @@ export interface Workspace {
     state: PublicKey;
     loading: Ref<boolean>;
     initialized: Ref<boolean>;
+}
+
+export interface SubscriptionInput {
+    duration: anchor.BN;
+    address: string;
+    options: string;
 }

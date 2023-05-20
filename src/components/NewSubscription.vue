@@ -4,11 +4,8 @@
     </div>
 
     <div v-if="connected" class="form-wrapper">
-        <label for="recipient">Recipient</label>
-        <input class="form-field" id="recipient" placeholder="Enter recipient address..." v-model="recipient">
-
-        <label for="length">Length</label>
-        <input class="form-field" id="length" type="number" min="1" placeholder="Enter subscription length in minutes..." v-model="length">
+        <label for="length">Duration</label>
+        <input class="form-field" id="duration" type="number" min="1" placeholder="Enter subscription duration (total number of rounds)..." v-model="duration">
         
         <label for="url">URL</label>
         <input class="form-field" id="url" placeholder="Enter API URL..." v-model="url">
@@ -33,7 +30,7 @@
 
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useWorkspace } from '@/composables';
+import { SubscriptionInput, useWorkspace } from '@/composables';
 //import * as anchor from '@project-serum/anchor';
 
 const { connected, wallet, program, state } = useWorkspace();
@@ -45,8 +42,8 @@ console.log(state);
 console.log(program);
 
 const router = useRouter();
-const recipient = ref<string>();
-const length = ref<number>();
+const address = ref<string>();
+const duration = ref<number>();
 const url = ref<string>();
 const options = ref<string>();
 const hasError = ref<boolean>(false);
@@ -63,14 +60,8 @@ const onSubmit = async () => {
     if (url.value && url.value.length > 100) {
         errorMsg.value = "API URL must not exceed 100 characters";
     }
-    if (!length.value || typeof length.value !== "number" || length.value <= 0) {
+    if (!duration.value || typeof duration.value !== "number" || duration.value <= 0) {
         errorMsg.value = "Subscription lenght must be a non-negative number";
-    }
-    if (!recipient.value) {
-        errorMsg.value = "Please add a valid recipient address";
-    }
-    if (recipient.value && (recipient.value.length < 32 || recipient.value.length > 45)) {
-        errorMsg.value = "Invalid address";
     }
     if (errorMsg.value) {
         hasError.value = true;
@@ -97,18 +88,13 @@ const onSubmit = async () => {
     //const subscription = anchor.web3.Keypair.generate();
 
     const input: SubscriptionInput = {
-        length: length.value as number,
-        recipient: recipient.value as string,
+        //duration: anchor.BN(duration.value as number),
+        duration: 0,
+        address: address.value as string,
         options: JSON.stringify(inputOptions)
     }
 
     console.log(input);
-}
-
-interface SubscriptionInput {
-    length: number;
-    recipient: string;
-    options: string;
 }
 
 </script>
