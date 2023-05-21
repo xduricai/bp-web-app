@@ -3,7 +3,10 @@
         <h1>New Subscription</h1>
     </div>
 
-    <div v-if="connected" class="form-wrapper">
+    <div v-if="loading" class="loading-text">
+        <h1>Loading, please wait...</h1>
+    </div>
+    <div v-else-if="workspace.connected" class="form-wrapper">
         <label for="length">Duration</label>
         <input class="form-field" id="duration" type="number" min="1" placeholder="Enter subscription duration (total number of rounds)..." v-model="duration">
         
@@ -28,25 +31,18 @@
     
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { SubscriptionInput, useWorkspace } from '@/composables';
-//import * as anchor from '@project-serum/anchor';
+import * as anchor from '@project-serum/anchor';
 
-const { connected, wallet, program, state } = useWorkspace();
-
-//TODO
-console.log(connected.value);
-console.log(wallet.value);
-console.log(state);
-console.log(program);
-
+const workspace = reactive(useWorkspace());
 const router = useRouter();
-const address = ref<string>();
 const duration = ref<number>();
 const url = ref<string>();
 const options = ref<string>();
 const hasError = ref<boolean>(false);
+const loading = ref<boolean>(false);
 const errorMsg = ref<string>();
 
 const toHome = () => router.push({ path: '/' });
@@ -78,23 +74,32 @@ const onSubmit = async () => {
         }
 
         inputOptions = options.value ? JSON.parse(options.value) : {};
-        inputOptions = { ...inputOptions, url: url.value};
+        inputOptions = { params: inputOptions, url: url.value }
     } catch (err) { 
         errorMsg.value = "JSON format invalid";
         hasError.value = true;
         return;
     }
 
-    //const subscription = anchor.web3.Keypair.generate();
-
+    const keypair = anchor.web3.Keypair.generate();
     const input: SubscriptionInput = {
-        //duration: anchor.BN(duration.value as number),
-        duration: 0,
-        address: address.value as string,
+        duration: new anchor.BN(duration.value as number),
         options: JSON.stringify(inputOptions)
     }
 
+    loading.value = true;
+    
+    await workspace.program.methods.addSubscription(input).accounts({
+        subscription: keypair.publicKey,
+        state: workspace.state,
+        client: workspace.wallet?.publicKey
+    })
+    .signers([keypair])
+    .rpc();
+
+    loading.value = false;
     console.log(input);
+    toHome();
 }
 
 </script>
@@ -136,6 +141,14 @@ const onSubmit = async () => {
         color: red;
         font-weight: bolder;
         font-size: 16px;
+        margin-bottom: 12px;
+    }
+
+    .loading-text {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        font-size: 20px;
         margin-bottom: 12px;
     }
 

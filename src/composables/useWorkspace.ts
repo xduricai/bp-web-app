@@ -37,7 +37,6 @@ export const initWorkspace = () => {
 
 export const initContract = async () => {
     workspace.loading.value = true;
-
     await workspace.program.value.methods.initialize().accounts({
         state: workspace.state,
         payer: workspace.wallet.value?.publicKey,
@@ -69,7 +68,6 @@ export const initContract = async () => {
         const keypair = anchor.web3.Keypair.generate();
         const input: SubscriptionInput = {
             duration: new anchor.BN(1000),
-            address: keypair.publicKey.toString(),
             options: JSON.stringify({})
         }
 
@@ -100,12 +98,6 @@ export const initContract = async () => {
     console.log(stateAccount);
     const subscriptions = await workspace.program.value.account.subscription.all();
     console.log(subscriptions);
-
-    subscriptions.forEach(sub => {
-        console.log(sub.account.client.toString());
-    })
-
-    console.log(workspace.wallet.value?.publicKey.toString());
 }
 
 export interface Workspace {
@@ -122,6 +114,5 @@ export interface Workspace {
 
 export interface SubscriptionInput {
     duration: anchor.BN;
-    address: string;
     options: string;
 }

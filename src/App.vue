@@ -1,6 +1,8 @@
 <template>
     <main>
-        <router-view></router-view>
+        <suspense>
+            <router-view></router-view>
+        </suspense>
     </main>
 </template>
 

@@ -7,15 +7,15 @@
         <table>
             <tr>
                 <th>#</th>
-                <th>Recipient</th>
                 <th>URL</th>
-                <th>Remaining duration</th>
+                <th>Address</th>
+                <th>Remaining duration (rounds)</th>
             </tr>
             <tr v-for="(item, index) in data" :key="index" class="subscription-info-wrapper">
                 <td> {{ index + 1 }} </td>
-                <td> {{ item.recipient }} </td>
-                <td> {{ item.options }} </td>
-                <td> {{ item.length }}</td>
+                <td> {{ item.url }} </td>
+                <td> {{ item.address }} </td>
+                <td> {{ item.duration }}</td>
             </tr>
         </table>
 
@@ -26,32 +26,32 @@
 </template>
     
 <script setup lang="ts">
+import { useWorkspace } from '@/composables';
+import { reactive, ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
 const toHome = () => router.push({ path: '/' });
+const workspace = reactive(useWorkspace());
 
-const data = [
-    {
-        client: '4DxtGPEeyJxuAVAvC9d6bn5wkmMP5GWxRSonYiJyYLjP',
-        recipient: '4DxtGPEeyJxuAVAvC9d6bn5wkmMP5GWxRSonYiJyYLjP',
-        length: 1230,
-        options: '{"url": "www.google.com"}'
-    },
-    {
-        client: '4DxtGPEeyJxuAVAvC9d6bn5wkmMP5GWxRSonYiJyYLjP',
-        recipient: '4DxtGPEeyJxuAVAvC9d6bn5wkmMP5GWxRSonYiJyYLjP',
-        length: 3848,
-        options: '{"url": "www.yahoo.com"}'
-    },
-    {
-        client: '4DxtGPEeyJxuAVAvC9d6bn5wkmMP5GWxRSonYiJyYLjP',
-        recipient: '4DxtGPEeyJxuAVAvC9d6bn5wkmMP5GWxRSonYiJyYLjP',
-        length: 1234,
-        options: '{"url": "www.bing.com"}'
-    },
-]
+const subscriptions = await workspace.program.account.subscription.all();
+console.log(subscriptions);
+
+const filtered: RowData[] = subscriptions
+    .filter(sub => sub.account.client.toString() === workspace.wallet?.publicKey.toString())
+    .map(sub => ({ 
+        url: ref(JSON.parse(sub.account.options).url),
+        duration: ref(sub.account.expiration.toNumber()),
+        address: ref(sub.publicKey.toString())
+    }));
+
+const data = reactive(filtered);
+
+interface RowData {
+    url: Ref<string>;
+    address: Ref<string>;
+    duration: Ref<number>;
+}
 </script>
     
 <style scoped lang="scss">
