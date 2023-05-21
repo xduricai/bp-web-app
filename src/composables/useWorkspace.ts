@@ -48,8 +48,10 @@ export const initContract = async () => {
     workspace.initialized.value = true;
     workspace.loading.value = false;
     console.log('app initialized');
-    /*
-    for(let i = 0; i < 1; i++) {
+    console.log(workspace.state.toString());
+    
+    
+    for(let i = 0; i < 3; i++) {
         const keypair = anchor.web3.Keypair.generate();
 
         await workspace.program.value.methods.addOracle().accounts({
@@ -61,40 +63,11 @@ export const initContract = async () => {
         .signers([keypair])
         .rpc();
     }
-
     console.log('oracles added');
+    
 
-    for(let i = 0; i < 1; i++) {
-        const keypair = anchor.web3.Keypair.generate();
-        const input: SubscriptionInput = {
-            duration: new anchor.BN(1000),
-            options: JSON.stringify({})
-        }
-
-        await workspace.program.value.methods.addSubscription(input).accounts({
-            subscription: keypair.publicKey,
-            state: workspace.state,
-            client: workspace.wallet.value?.publicKey,
-        })
-        .signers([keypair])
-        .rpc();
-    }
-
-    console.log('subscriptions added');
-    */
-    /*
-    const data = {
-        abc: 1,
-        def: 2,
-        ghi: 3
-    }
-   
-    await workspace.program.value.methods.reportData(JSON.stringify(data)).accounts({
-        subscription: 'DtCPjn2oLBXf4tyUpkN6RmrqABJcjz9Dece3318ibzWo'
-    })
-    .rpc();
-    */
     const stateAccount = await workspace.program.value.account.state.fetch(workspace.state);
+    console.log(workspace.state.toString());
     console.log(stateAccount);
     const subscriptions = await workspace.program.value.account.subscription.all();
     console.log(subscriptions);
