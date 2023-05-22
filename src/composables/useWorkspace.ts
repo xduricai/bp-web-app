@@ -48,7 +48,7 @@ export const initContract = async () => {
     workspace.initialized.value = true;
     workspace.loading.value = false;
     console.log('app initialized');
-    console.log(workspace.state.toString());
+    console.log(`State: ${workspace.state.toString()}`);
     
     
     for(let i = 0; i < 3; i++) {
