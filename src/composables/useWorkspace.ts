@@ -3,7 +3,7 @@ import { AnchorWallet, useAnchorWallet, useWallet } from 'solana-wallets-vue';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import { Provider, Program, Idl } from '@project-serum/anchor';
 import * as anchor from '@project-serum/anchor';
-import idl from '../../../../oracle-smart-contract/target/idl/oracle_smart_contract.json';
+import idl from '../../../bp-smart-contract/target/idl/oracle_smart_contract.json'
 
 let workspace: Workspace;
 const programId = new PublicKey(idl.metadata.address)
