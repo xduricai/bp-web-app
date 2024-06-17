@@ -1,6 +1,6 @@
 # Oracle Web Application 
 
-Simple web application used to configure and initialize the oracle network by managing existing subscription. Serves as a proof of concept for [Internet of Value and DeFi in Solana](https://github.com/xduricai/bp-text).
+Simple web application used to configure and initialize the oracle network and create subscriptions. Serves as a proof of concept for [Internet of Value and DeFi in Solana](https://github.com/xduricai/bp-main).
 
 ## Prerequisites  
 
